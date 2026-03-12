@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  clerkId       String    @unique
+  email         String    @unique
+  name          String?
+  company       String?
+  role          Role      @default(CUSTOMER)
+  phone         String?
+  address       String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  orders        Order[]
+  messages      Message[]
+}
+
+model Order {
+  id                String      @id @default(cuid())
+  orderNumber       String      @unique
+  status            OrderStatus @default(ORDER_RECEIVED)
+  garmentType       String
+  quantity          Int
+  fabricType        String?
+  fabricWeight      String?
+  colorCodes        String?
+  logoPlacement     String?
+  decorationMethod  String?
+  labelRequirements String?
+  shippingAddress   String?
+  shippingMethod    String?
+  specialNotes      String?     @db.Text
+  timelineRequest   String?
+  customerId        String
+  customer          User        @relation(fields: [customerId], references: [id])
+  assignedToId      String?
+  files             File[]
+  messages          Message[]
+  invoices          Invoice[]
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model File {
+  id          String   @id @default(cuid())
+  filename    String
+  url         String
+  type        FileType
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id])
+  uploadedBy  String
+  createdAt   DateTime @default(now())
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id])
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  internal  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Invoice {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER
+}
+
+enum OrderStatus {
+  ORDER_RECEIVED
+  QUOTE_SENT
+  QUOTE_APPROVED
+  DEPOSIT_RECEIVED
+  IN_PRODUCTION
+  QUALITY_CHECK
+  READY_TO_SHIP
+  SHIPPED
+  DELIVERED
+}
+
+enum FileType {
+  TECH_PACK
+  REFERENCE_IMAGE
+  MOCKUP
+  PRODUCTION_PHOTO
+  QC_PHOTO
+  SHIPPING_DOC
+  OTHER
+}

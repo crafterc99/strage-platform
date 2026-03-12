@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+@theme {
+  /* ═══ STRAGE BRAND — Sustainable Sportswear ═══ */
+
+  /* Deep, professional base */
+  --color-charcoal: #0F172A;
+  --color-graphite: #1E293B;
+  --color-smoke: #334155;
+  --color-slate-light: #475569;
+
+  /* Brand green — sustainability accent */
+  --color-forest: #059669;
+  --color-emerald: #10B981;
+  --color-mint: #34D399;
+
+  /* Warm accent for CTAs */
+  --color-amber: #F59E0B;
+  --color-amber-hover: #D97706;
+
+  /* Semantic aliases */
+  --color-brand: #059669;
+  --color-brand-hover: #047857;
+  --color-brand-light: #10B981;
+  --color-bg-primary: #0F172A;
+  --color-bg-card: #1E293B;
+  --color-bg-border: #334155;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+  --color-info: #3B82F6;
+
+  /* Typography */
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+/* ═══ GLOBAL DARK-FIRST BASE ═══ */
+html {
+  background-color: #0F172A;
+}
+
+body {
+  margin: 0;
+  background-color: #0F172A;
+  color: #F8FAFC;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-width: 320px;
+}
+
+/* ═══ SCROLLBAR ═══ */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0F172A;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #059669;
+}
+
+/* ═══ GRADIENTS ═══ */
+.gradient-brand {
+  background: linear-gradient(135deg, #059669, #10B981);
+}
+.gradient-dark {
+  background: linear-gradient(to bottom, #0F172A, #1E293B);
+}
+
+/* ═══ GLOW ═══ */
+.glow-brand {
+  box-shadow: 0 0 20px rgba(5, 150, 105, 0.3);
+}
