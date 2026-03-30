@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import { useUser } from '@clerk/react'
 import { useOrders } from '@/hooks/useOrders'
 import PageWrapper from '@/components/layout/PageWrapper'
 import Card from '@/components/ui/Card'
@@ -10,7 +9,6 @@ import { ORDER_STATUS_LABELS } from '@/types'
 import { STATUS_BADGE_VARIANT } from '@/lib/constants'
 
 export default function PortalPage() {
-  const { user } = useUser()
   const { data: orders, isLoading } = useOrders()
 
   const activeOrders = orders?.filter((o) => o.status !== 'DELIVERED') || []
@@ -18,7 +16,7 @@ export default function PortalPage() {
 
   return (
     <PageWrapper
-      title={`Welcome, ${user?.firstName || 'there'}`}
+      title="Welcome back"
       subtitle="Manage your orders and track production progress"
       action={
         <Link to="/portal/orders/new">

@@ -1,11 +1,7 @@
-import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom'
-import { useAuth } from '@clerk/react'
 import Navbar from '@/components/layout/Navbar'
 import CustomerLayout from '@/components/layout/CustomerLayout'
 import AdminLayout from '@/components/layout/AdminLayout'
-import ProtectedRoute from '@/components/auth/ProtectedRoute'
-import AdminRoute from '@/components/auth/AdminRoute'
 import ToastContainer from '@/components/ui/ToastContainer'
 import Button from '@/components/ui/Button'
 
@@ -24,8 +20,7 @@ import AdminDashboardPage from '@/pages/admin/AdminDashboardPage'
 import AdminOrderListPage from '@/pages/admin/OrderListPage'
 import AdminOrderDetailPage from '@/pages/admin/OrderDetailPage'
 
-import { api } from '@/lib/api'
-import { useAuthStore } from '@/store/authStore'
+const isPreviewMode = !import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
 function LandingPage() {
   return (
@@ -65,6 +60,26 @@ function LandingPage() {
         </div>
       </div>
 
+      {/* Preview mode nav — lets you tap through all screens */}
+      {isPreviewMode && (
+        <div className="max-w-3xl mx-auto px-4 pb-12">
+          <div className="bg-graphite border border-forest/30 rounded-2xl p-6">
+            <h3 className="text-sm font-semibold text-forest uppercase tracking-wider mb-4">Preview Mode — All Screens</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <Link to="/portal"><Button variant="secondary" size="sm" className="w-full">Customer Portal</Button></Link>
+              <Link to="/portal/orders"><Button variant="secondary" size="sm" className="w-full">My Orders</Button></Link>
+              <Link to="/portal/orders/new"><Button variant="secondary" size="sm" className="w-full">New Order Form</Button></Link>
+              <Link to="/portal/orders/demo"><Button variant="secondary" size="sm" className="w-full">Order Detail</Button></Link>
+              <Link to="/admin"><Button variant="secondary" size="sm" className="w-full">Admin Dashboard</Button></Link>
+              <Link to="/admin/orders"><Button variant="secondary" size="sm" className="w-full">Admin Orders</Button></Link>
+              <Link to="/admin/orders/demo"><Button variant="secondary" size="sm" className="w-full">Admin Order Detail</Button></Link>
+              <Link to="/login"><Button variant="secondary" size="sm" className="w-full">Login Page</Button></Link>
+              <Link to="/signup"><Button variant="secondary" size="sm" className="w-full">Signup Page</Button></Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="border-t border-smoke py-8 text-center">
         <p className="text-xs text-white/20">
           <span className="text-forest font-bold">STRAGE</span> Clothing &middot; Sialkot, Pakistan &middot; Sustainable Sportswear
@@ -74,22 +89,9 @@ function LandingPage() {
   )
 }
 
-function AuthSync() {
-  const { getToken } = useAuth()
-  const fetchDbUser = useAuthStore((s) => s.fetchDbUser)
-
-  useEffect(() => {
-    api.setTokenGetter(() => getToken())
-    fetchDbUser()
-  }, [getToken, fetchDbUser])
-
-  return null
-}
-
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthSync />
       <Navbar />
       <ToastContainer />
       <Routes>
@@ -98,12 +100,8 @@ export default function App() {
         <Route path="/login/*" element={<LoginPage />} />
         <Route path="/signup/*" element={<SignupPage />} />
 
-        {/* Customer portal */}
-        <Route path="/portal" element={
-          <ProtectedRoute>
-            <CustomerLayout />
-          </ProtectedRoute>
-        }>
+        {/* Customer portal — no auth guard in preview mode */}
+        <Route path="/portal" element={<CustomerLayout />}>
           <Route index element={<PortalPage />} />
           <Route path="orders" element={<OrderListPage />} />
           <Route path="orders/new" element={<NewOrderPage />} />
@@ -111,13 +109,7 @@ export default function App() {
         </Route>
 
         {/* Admin */}
-        <Route path="/admin" element={
-          <ProtectedRoute>
-            <AdminRoute>
-              <AdminLayout />
-            </AdminRoute>
-          </ProtectedRoute>
-        }>
+        <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboardPage />} />
           <Route path="orders" element={<AdminOrderListPage />} />
           <Route path="orders/:id" element={<AdminOrderDetailPage />} />
